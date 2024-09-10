@@ -46,7 +46,7 @@ class CredentialCreateView(RepositoryMixin, generic.CreateView):
 class CredentialSecretKeyView(RepositoryMixin, generic.View):
 
     def get(self, request, repo, access_key):
-        if not request.is_ajax():
+        if not request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
             raise SuspiciousOperation
         credential = get_object_or_404(
             self.repository.credentials, access_key=access_key)

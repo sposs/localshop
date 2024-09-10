@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, resolve_url
 from django.template.response import TemplateResponse
-from django.utils.http import is_safe_url
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views import generic
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
@@ -146,7 +146,7 @@ class AccessKeySecretView(LoginRequiredMixin, generic.DetailView):
         return self.request.user.access_keys.all()
 
     def get(self, request, pk, *args, **kwargs):
-        if not request.is_ajax():
+        if not request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
             raise SuspiciousOperation
         key = get_object_or_404(self.request.user.access_keys, pk=pk)
         return HttpResponse(key.secret_key)
@@ -199,7 +199,7 @@ def login(request, template_name='registration/login.html',
         if form.is_valid():
 
             # Ensure the user-originating redirection url is safe.
-            if not is_safe_url(url=redirect_to, allowed_hosts=request.get_host()):
+            if not url_has_allowed_host_and_scheme(url=redirect_to, allowed_hosts=request.get_host()):
                 redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
 
             if not form.cleaned_data['remember_me']:

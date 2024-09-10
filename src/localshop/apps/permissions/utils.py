@@ -5,7 +5,6 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.db import DatabaseError, DataError
 from django.http import HttpResponseForbidden
-from django.utils.decorators import available_attrs
 
 from localshop.apps.permissions.models import CIDR
 from localshop.http import HttpResponseUnauthorized
@@ -50,7 +49,7 @@ def credentials_required(view_func):
     This decorator should be used with views that need simple authentication
     against Django's authentication framework.
     """
-    @wraps(view_func, assigned=available_attrs(view_func))
+    @wraps(view_func)
     def decorator(request, *args, **kwargs):
         if settings.LOCALSHOP_USE_PROXIED_IP:
             try:

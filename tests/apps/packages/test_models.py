@@ -1,7 +1,6 @@
 import os.path
 
 import pytest
-from django.utils import six
 
 from localshop.apps.packages import models, utils
 from tests import factories
@@ -62,7 +61,7 @@ class TestReleaseFile:
     def test_save_contents(self):
         release_file = factories.ReleaseFileFactory()
 
-        dummy_fh = six.BytesIO(six.b("release-file-contents"))
+        dummy_fh = b"release-file-contents"
         release_file.save_filecontent('dummy.txt', dummy_fh)
 
         assert release_file.distribution.name == 'default/2.7/t/test-package/dummy.txt'
@@ -72,7 +71,7 @@ class TestReleaseFile:
     def test_delete_file(self):
         release_file = factories.ReleaseFileFactory()
 
-        dummy_fh = six.BytesIO(six.b("release-file-contents"))
+        dummy_fh = b"release-file-contents"
         release_file.save_filecontent('dummy.txt', dummy_fh)
 
         assert os.path.exists(release_file.distribution.path)
@@ -83,7 +82,7 @@ class TestReleaseFile:
     @pytest.mark.skip
     @pytest.mark.django_db
     def test_delete_file_twice_referenced(self):
-        dummy_fh = six.BytesIO(six.b("release-file-contents"))
+        dummy_fh = b"release-file-contents"
 
         release_file = factories.ReleaseFileFactory()
         release_file.save_filecontent('dummy.txt', dummy_fh)

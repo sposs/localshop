@@ -7,7 +7,7 @@ from localshop.apps.packages.models import (
 from localshop.apps.permissions.models import CIDR, Credential
 
 
-class RepositoryFactory(factory.DjangoModelFactory):
+class RepositoryFactory(factory.django.DjangoModelFactory):
     name = 'Default'
     slug = 'default'
 
@@ -16,7 +16,7 @@ class RepositoryFactory(factory.DjangoModelFactory):
         django_get_or_create = ('slug',)
 
 
-class PackageFactory(factory.DjangoModelFactory):
+class PackageFactory(factory.django.DjangoModelFactory):
     name = 'test-package'
     repository = factory.SubFactory(RepositoryFactory)
 
@@ -24,7 +24,7 @@ class PackageFactory(factory.DjangoModelFactory):
         model = Package
 
 
-class ReleaseFactory(factory.DjangoModelFactory):
+class ReleaseFactory(factory.django.DjangoModelFactory):
     author = 'John Doe'
     author_email = 'j.doe@example.org'
     description = 'A test release'
@@ -40,7 +40,7 @@ class ReleaseFactory(factory.DjangoModelFactory):
         model = Release
 
 
-class ReleaseFileFactory(factory.DjangoModelFactory):
+class ReleaseFileFactory(factory.django.DjangoModelFactory):
     release = factory.SubFactory(ReleaseFactory)
     distribution = factory.django.FileField(filename='the_file.dat',
                                             data='the file data')
@@ -57,7 +57,7 @@ class ReleaseFileFactory(factory.DjangoModelFactory):
         model = ReleaseFile
 
 
-class CIDRFactory(factory.DjangoModelFactory):
+class CIDRFactory(factory.django.DjangoModelFactory):
     repository = factory.SubFactory(RepositoryFactory)
     cidr = '0/0'
     require_credentials = False
@@ -66,22 +66,22 @@ class CIDRFactory(factory.DjangoModelFactory):
         model = CIDR
 
 
-class CredentialFactory(factory.DjangoModelFactory):
+class CredentialFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Credential
 
 
-class TeamFactory(factory.DjangoModelFactory):
+class TeamFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Team
 
 
-class UserFactory(factory.DjangoModelFactory):
+class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = get_user_model()
 
 
-class TeamMemberFactory(factory.DjangoModelFactory):
+class TeamMemberFactory(factory.django.DjangoModelFactory):
     team = factory.SubFactory(TeamFactory)
     user = factory.SubFactory(UserFactory)
     role = 'developer'

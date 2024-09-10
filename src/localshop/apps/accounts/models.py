@@ -4,8 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from model_utils.fields import AutoCreatedField
 from model_utils.models import TimeStampedModel
 
@@ -54,7 +53,6 @@ class AccessKey(models.Model):
         return True
 
 
-@python_2_unicode_compatible
 class Team(TimeStampedModel):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=500, blank=True)

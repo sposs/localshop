@@ -1,8 +1,7 @@
 import re
 
 from django.conf import settings
-from django.conf.urls import include, url
-from django.conf.urls.static import static
+from django.urls import include, path, re_path
 from django.contrib import admin
 from django.views.generic import RedirectView
 
@@ -18,22 +17,22 @@ static_prefix = re.escape(settings.STATIC_URL.lstrip('/'))
 
 
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
-    url(r'^dashboard/', include(localshop.apps.dashboard.urls)),
+    path('', views.index, name='index'),
+    path('dashboard/', include(localshop.apps.dashboard.urls)),
 
     # Default path for xmlrpc calls
-    url(r'^RPC2$', handle_request),
-    url(r'^pypi$', handle_request),
+    path('RPC2', handle_request),
+    path('pypi', handle_request),
 
-    url(r'^repo/', include(localshop.apps.packages.urls)),
+    path('repo/', include(localshop.apps.packages.urls)),
 
     # Backwards compatible url (except for POST requests)
-    url(r'^simple/?$', SimpleIndex.as_view(), {'repo': 'default'}),
-    url(r'^simple/(?P<path>.*)',
+    path('simple/', SimpleIndex.as_view(), {'repo': 'default'}),
+    re_path(r'^simple/(?P<path>.*)',
         RedirectView.as_view(url='/repo/default/%(path)s')),
 
-    url(r'^oauth/', include('social_django.urls', namespace='social')),
-    url(r'^accounts/', include('localshop.apps.accounts.auth_urls')),
-    url(r'^accounts/', include('localshop.apps.accounts.urls')),
-    url(r'^admin/', admin.site.urls),
+    path('oauth/', include('social_django.urls', namespace='social')),
+    path('accounts/', include('localshop.apps.accounts.auth_urls')),
+    path('accounts/', include('localshop.apps.accounts.urls')),
+    path('admin/', admin.site.urls),
 ]

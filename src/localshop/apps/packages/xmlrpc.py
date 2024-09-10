@@ -1,16 +1,11 @@
 
 from django.db.models import Q
 from django.http import HttpResponse
-from django.utils import six
 from django.views.decorators.csrf import csrf_exempt
 
 from localshop.apps.packages import models
 from localshop.apps.permissions.utils import credentials_required
-
-if six.PY2:
-    from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
-else:
-    from xmlrpc.server import SimpleXMLRPCDispatcher
+from xmlrpc.server import SimpleXMLRPCDispatcher
 
 dispatcher = SimpleXMLRPCDispatcher(allow_none=False, encoding=None)
 

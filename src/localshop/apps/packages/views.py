@@ -10,7 +10,6 @@ from django.http import (
     Http404, HttpResponse, HttpResponseBadRequest, HttpResponseForbidden,
     HttpResponseNotFound)
 from django.shortcuts import redirect
-from django.utils import six
 from django.views import generic
 from versio.version import Version
 from versio.version_scheme import (
@@ -204,8 +203,7 @@ def handle_register_or_upload(post_data, files, user, repository):
     if not package:
         pkg_form = forms.PackageForm(post_data, repository=repository)
         if not pkg_form.is_valid():
-            return HttpResponseBadRequest(
-                reason=six.next(six.itervalues(pkg_form.errors))[0])
+            return HttpResponseBadRequest(reason=repr(pkg_form.errors[0]))
         package = pkg_form.save()
 
     release = form.save(commit=False)

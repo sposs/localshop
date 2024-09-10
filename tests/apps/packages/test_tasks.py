@@ -2,7 +2,6 @@ from hashlib import md5
 
 import mock
 import pytest
-from django.utils import six
 
 from localshop.apps.packages import models, tasks
 from tests.factories import PackageFactory, ReleaseFileFactory
@@ -12,7 +11,7 @@ from tests.factories import PackageFactory, ReleaseFileFactory
 @pytest.mark.django_db
 def test_download_file(requests_mock, tmpdir, settings):
     settings.MEDIA_ROOT = tmpdir
-    file_data = six.b('My cool package')
+    file_data = b'My cool package'
     release_file = ReleaseFileFactory(
         distribution=None,
         md5_digest=md5(file_data).hexdigest())
@@ -38,7 +37,7 @@ def test_download_file(requests_mock, tmpdir, settings):
 @mock.patch('requests.get')
 @pytest.mark.django_db
 def test_download_file_incorrect_md5_sum(requests_mock):
-    file_data = six.b('My cool package')
+    file_data = b'My cool package'
     release_file = ReleaseFileFactory(distribution=None, md5_digest='arcoiro')
 
     requests_mock.return_value = mock.Mock(**{
@@ -60,7 +59,7 @@ def test_download_file_incorrect_md5_sum(requests_mock):
 @pytest.mark.django_db
 def test_download_file_missing_content_length(requests_mock, settings, tmpdir):
     settings.MEDIA_ROOT = tmpdir
-    file_data = six.b('My cool package')
+    file_data = b'My cool package'
     release_file = ReleaseFileFactory(distribution=None,
                                       md5_digest=md5(file_data).hexdigest())
 
@@ -87,7 +86,7 @@ def test_download_file_with_proxy_enabled(requests_mock, settings):
     settings.LOCALSHOP_HTTP_PROXY = {
         "http": "http://10.10.1.10:3128/",
     }
-    file_data = six.b('My cool package')
+    file_data = b'My cool package'
     release_file = ReleaseFileFactory(distribution=None,
                                       md5_digest=md5(file_data).hexdigest())
 

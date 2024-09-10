@@ -5,7 +5,7 @@ import os
 from io import BytesIO
 
 from django.core.handlers.wsgi import WSGIRequest
-from django.http.multipartparser import parse_header
+from django.utils.http import parse_header_parameters
 
 logger = logging.getLogger(__name__)
 
@@ -31,8 +31,10 @@ def alter_old_distutils_request(request: WSGIRequest):
     new_body = BytesIO()
 
     # Split the response in the various parts based on the boundary string
-    content_type, opts = parse_header(request.META['CONTENT_TYPE'].encode('ascii'))
-    parts = body.split(b'\n--' + opts['boundary'] + b'\n')
+    content_type, opts = parse_header_parameters(request.META['CONTENT_TYPE'].encode('ascii'))
+    if "xml" in content_type:
+        return
+    parts = body.split(b'\n--' + opts.get('boundary', b"") + b'\n')
     for part in parts:
         if b'\n\n' not in part:
             continue
@@ -46,7 +48,7 @@ def alter_old_distutils_request(request: WSGIRequest):
         new_body.write(b'\r\n\r\n')
         new_body.write(content)
         new_body.write(b'\r\n')
-    new_body.write(b'--' + opts['boundary'] + b'--\r\n')
+    new_body.write(b'--' + opts.get('boundary', b"") + b'--\r\n')
 
     request._body = new_body.getvalue()
     request.META['CONTENT_LENGTH'] = len(request._body)

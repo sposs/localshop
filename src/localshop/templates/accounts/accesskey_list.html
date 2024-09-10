@@ -57,7 +57,7 @@ repository: http://localhost:8000/repo/your-repo/</pre>
                 <tr>
                     <td title="created {{ key.created }}">{{ key.access_key }}</td>
                     <td>
-                        <span data-secret-key="{{ key.pk }}" class="secret-keys">
+                        <span data-secret-key="{{ key.pk }}" class="secret-keys"></span>
                         <a href="{% url 'accounts:access_key_secret' pk=key.pk %}" data-access-key="{{ key.pk }}" class="toggle-secret-key"><span class="icon-lock"></span> show</a>
                     </td>
                     <td>{{ key.comment }}</td>
@@ -65,7 +65,7 @@ repository: http://localhost:8000/repo/your-repo/</pre>
                     <td>
                         <a href="{% url 'accounts:access_key_edit' pk=key.pk %}"><span class="icon-edit"></span> edit</a>
                         <a href="{% url 'accounts:access_key_delete' pk=key.pk %}"><span class="icon-edit"></span> delete</a>
-                    </a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

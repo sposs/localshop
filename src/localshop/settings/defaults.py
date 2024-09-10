@@ -14,6 +14,29 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 
 DEBUG = env.bool('DEBUG', default=False)
 
+INSTALLED_APPS = [
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.admin',
+    'django.contrib.humanize',
+
+    'django_celery_beat',
+    'django_celery_results',
+    'social_django',
+    'widget_tweaks',
+
+    'localshop',
+    'localshop.apps.accounts',
+    'localshop.apps.dashboard',
+    'localshop.apps.packages',
+    'localshop.apps.permissions',
+]
+
+
 DATABASES = {
     'default': env.db(default='sqlite:///localshop.db'),
 }
@@ -100,34 +123,13 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
 CELERY_BEAT_SCHEDULE = {
     'refresh-repos': {
         'task': 'localshop.apps.packages.tasks.refresh_repository_mirrors',
-        'schedule': crontab(minute=30),
+        'schedule': crontab(minute="30"),
     },
 }
 CELERY_IMPORTS = [
     'localshop.apps.packages.tasks',
 ]
 
-INSTALLED_APPS = [
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.admin',
-    'django.contrib.humanize',
-
-    'django_celery_beat',
-    'django_celery_results',
-    'social_django',
-    'widget_tweaks',
-
-    'localshop',
-    'localshop.apps.accounts',
-    'localshop.apps.dashboard',
-    'localshop.apps.packages',
-    'localshop.apps.permissions',
-]
 
 # Auth settings
 AUTHENTICATION_BACKENDS = [
