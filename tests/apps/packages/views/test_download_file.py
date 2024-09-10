@@ -4,7 +4,6 @@ from hashlib import md5
 import mock
 import pytest
 from django.urls import reverse
-from django.utils import six
 from mock import Mock
 
 from localshop.apps.packages import views
@@ -39,7 +38,7 @@ def test_download_pypi_release(download_file_mock, repository, rf):
 @pytest.mark.django_db
 def test_download_pypi_release_when_isolated_is_on(requests_mock, rf,
                                                    repository, settings):
-    file_data = six.b('Hello from PyPI')
+    file_data = b'Hello from PyPI'
     md5_digest = md5(file_data).hexdigest()
 
     settings.LOCALSHOP_ISOLATED = True
@@ -93,7 +92,7 @@ def test_download_local_release(rf, isolated, repository, settings):
 
     # Localshop must return the release file
     assert response.status_code == 200
-    assert response.content == six.b('the file data')
+    assert response.content == b'the file data'
     assert response.get('Content-Length') == '13'
     assert response.get('Content-Disposition') == 'attachment; filename=test-1.0.0-sdist.zip'
 

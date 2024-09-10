@@ -31,10 +31,10 @@ def alter_old_distutils_request(request: WSGIRequest):
     new_body = BytesIO()
 
     # Split the response in the various parts based on the boundary string
-    content_type, opts = parse_header_parameters(request.META['CONTENT_TYPE'].encode('ascii'))
+    content_type, opts = parse_header_parameters(request.META['CONTENT_TYPE'])
     if "xml" in content_type:
         return
-    parts = body.split(b'\n--' + opts.get('boundary', b"") + b'\n')
+    parts = body.split(b'\n--' + (opts.get('boundary', "")).encode("utf8") + b'\n')
     for part in parts:
         if b'\n\n' not in part:
             continue
@@ -43,12 +43,12 @@ def alter_old_distutils_request(request: WSGIRequest):
         if not headers:
             continue
 
-        new_body.write(b'--' + opts['boundary'] + b'\r\n')
+        new_body.write(b'--' + opts['boundary'].encode("utf8") + b'\r\n')
         new_body.write(headers.replace(b'\n', b'\r\n'))
         new_body.write(b'\r\n\r\n')
         new_body.write(content)
         new_body.write(b'\r\n')
-    new_body.write(b'--' + opts.get('boundary', b"") + b'--\r\n')
+    new_body.write(b'--' + (opts.get('boundary', "")).encode("utf8") + b'--\r\n')
 
     request._body = new_body.getvalue()
     request.META['CONTENT_LENGTH'] = len(request._body)

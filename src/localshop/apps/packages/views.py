@@ -62,8 +62,7 @@ class SimpleIndex(CsrfExemptMixin, RepositoryMixin, RepositoryAccessMixin,
             return HttpResponseForbidden(
                 "Upload is not allowed with the provided credentials")
 
-        return handler(
-            request.POST, request.FILES, request.user, self.repository)
+        return handler(request.POST, request.FILES, request.user, self.repository)
 
     def get_queryset(self):
         return self.repository.packages.all()
@@ -203,7 +202,7 @@ def handle_register_or_upload(post_data, files, user, repository):
     if not package:
         pkg_form = forms.PackageForm(post_data, repository=repository)
         if not pkg_form.is_valid():
-            return HttpResponseBadRequest(reason=repr(pkg_form.errors[0]))
+            return HttpResponseBadRequest(reason=list(pkg_form.errors.values())[0][0])
         package = pkg_form.save()
 
     release = form.save(commit=False)

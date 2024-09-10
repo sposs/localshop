@@ -98,8 +98,8 @@ def fetch_package(repository_pk, slug):
     logger.info('done fetch_package: %s', slug)
 
 
-@app.task(ignore_result=True)
-def download_file(pk):
+@app.task(bind=True, ignore_result=True)
+def download_file(self, pk):
     """Download the file reference in `models.ReleaseFile` with the given pk.
 
     """
@@ -109,8 +109,11 @@ def download_file(pk):
     proxies = None
     if settings.LOCALSHOP_HTTP_PROXY:
         proxies = settings.LOCALSHOP_HTTP_PROXY
-    response = requests.get(release_file.url, stream=True, proxies=proxies)
-
+    try:
+        response = requests.get(release_file.url, stream=True, proxies=proxies)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        raise self.retry(exc=e)
     # Write the file to the django file field
     filename = os.path.basename(release_file.url)
 

@@ -59,7 +59,7 @@ class ReleaseFileFactory(factory.django.DjangoModelFactory):
 
 class CIDRFactory(factory.django.DjangoModelFactory):
     repository = factory.SubFactory(RepositoryFactory)
-    cidr = '0/0'
+    cidr = '0.0.0.0/0'
     require_credentials = False
 
     class Meta:

@@ -2,7 +2,6 @@ import uuid
 from base64 import standard_b64encode
 
 import pytest
-from django.utils import six
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 from localshop.apps.packages.models import Package
@@ -109,7 +108,7 @@ def test_package_upload(django_app, admin_user, repository, upload_post_data,
     assert release_file.python_version == 'source'
     assert release_file.filetype == 'sdist'
     assert release_file.md5_digest == '06ffe94789d7bd9efba1109f40e935cf'
-    assert release_file.distribution.read() == six.b('binary-test-data-here')
+    assert release_file.distribution.read() == b'binary-test-data-here'
 
 
 def test_package_register(django_app, repository, admin_user, register_post_data):
@@ -346,7 +345,7 @@ def test_invalid_version_upload(client, settings, repository, admin_user):
         'metadata_version': '1.0',
         'md5_digest': '06ffe94789d7bd9efba1109f40e935cf',
         'filetype': 'sdist',
-        'content': NamedStringIO(b'Hi', name='blabla'),
+        'content': NamedStringIO(b'Hi'),
     }
 
     response = client.post(
@@ -374,7 +373,7 @@ def test_valid_version_upload(client, settings, repository, admin_user):
         'metadata_version': '1.0',
         'md5_digest': '06ffe94789d7bd9efba1109f40e935cf',
         'filetype': 'sdist',
-        'content': NamedStringIO(b'Hi', name='blabla'),
+        'content': NamedStringIO(b'Hi'),
     }
 
     response = client.post(
