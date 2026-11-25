@@ -90,11 +90,30 @@ def test_download_local_release(rf, isolated, repository, settings):
     request = rf.get(reverse('packages:download', kwargs=url_kwargs))
     response = views.DownloadReleaseFile.as_view()(request, **url_kwargs)
 
-    # Localshop must return the release file
+    # Without MEDIA_URL, Localshop must return the release file itself
+    assert response.status_code == 200
+    assert response.get('Content-Disposition') == 'attachment; filename=%s' % release_file.filename
+
+
+@pytest.mark.django_db
+def test_download_local_release_redirects_to_media_url(rf, repository, settings):
+    settings.MEDIA_URL = '/media/'
+
+    release_file = ReleaseFileFactory(
+        release__package__repository=repository)
+
+    url_kwargs = {
+        'repo': repository.slug,
+        'name': release_file.release.package.name,
+        'pk': release_file.pk,
+        'filename': release_file.filename
+    }
+
+    request = rf.get(reverse('packages:download', kwargs=url_kwargs))
+    response = views.DownloadReleaseFile.as_view()(request, **url_kwargs)
+
     assert response.status_code == 302
-    #assert response.content == b'the file data'
-    #assert response.get('Content-Length') == '13'
-    #assert response.get('Content-Disposition') == 'attachment; filename=test-1.0.0-sdist.zip'
+    assert response['Location'].startswith('/media/')
 
 
 @mock.patch('localshop.apps.packages.tasks.download_file')
