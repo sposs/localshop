@@ -16,7 +16,10 @@ from tests.factories import CIDRFactory, RepositoryFactory
 def pytest_configure(config):
     override = override_settings(
         ALLOWED_HOSTS=['*'],
-        STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage',
+        STORAGES={
+            'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+            'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+        },
         CELERY_TASK_ALWAYS_EAGER=True,
     )
     override.enable()
@@ -25,7 +28,7 @@ def pytest_configure(config):
 @pytest.fixture(scope='function')
 def pypi_stub():
     with requests_mock.Mocker(real_http=True) as rm:
-        wildcard_re = re.compile('^https://pypi\.internal/.*')
+        wildcard_re = re.compile(r'^https://pypi\.internal/.*')
         rm.register_uri('GET', wildcard_re, status_code=404)
 
         pypi_dir = os.path.join(os.path.dirname(__file__), 'pypi_data')
@@ -53,7 +56,6 @@ def pypi_stub():
 
 
 @pytest.fixture(scope='function')
-@pytest.mark.django_db
 def repository(db):
     repo = RepositoryFactory()
     CIDRFactory(repository=repo)

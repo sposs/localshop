@@ -42,7 +42,7 @@ DATABASES = {
 }
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = env.str('SECRET_KEY', default=uuid.uuid4())
+SECRET_KEY = env.str('SECRET_KEY', default=uuid.uuid4().hex)
 
 # Local time zone for this installation. Choices can be found here:
 TIME_ZONE = env.str('TIME_ZONE', default='UTC')
@@ -50,8 +50,10 @@ LANGUAGE_CODE = 'en-us'
 
 SITE_ID = 1
 
+# Keep the integer primary keys used by the existing migrations.
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 USE_I18N = True
-USE_L10N = True
 USE_TZ = True
 
 MEDIA_ROOT = env.str('LOCALSHOP_ROOT', os.path.join(PROJECT_ROOT, 'public', 'media'))
@@ -63,7 +65,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(PROJECT_ROOT, 'static')
 ]
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -172,9 +173,16 @@ EMAIL = env.email_url('EMAIL', 'smtp://localhost:25/')
 ALLOWED_HOSTS = ['*']
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024  # 100 mb
-DEFAULT_FILE_STORAGE = env.str(
-    'LOCALSHOP_FILE_STORAGE',
-    default='django.core.files.storage.FileSystemStorage')
+STORAGES = {
+    'default': {
+        'BACKEND': env.str(
+            'LOCALSHOP_FILE_STORAGE',
+            default='django.core.files.storage.FileSystemStorage'),
+    },
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage',
+    },
+}
 
 AWS_STORAGE_BUCKET_NAME = env.str('LOCALSHOP_FILE_BUCKET_NAME', default='')
 
@@ -211,3 +219,10 @@ else:
         if key.startswith('_'):
             continue
         setattr(sys.modules[__name__], key, value)
+
+    # Django 5.1 removed DEFAULT_FILE_STORAGE and STATICFILES_STORAGE; map them
+    # onto STORAGES so existing user config files keep working.
+    for _old_key, _alias in (('DEFAULT_FILE_STORAGE', 'default'),
+                             ('STATICFILES_STORAGE', 'staticfiles')):
+        if hasattr(user_settings, _old_key):
+            STORAGES[_alias] = {'BACKEND': getattr(user_settings, _old_key)}

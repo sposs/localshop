@@ -30,7 +30,7 @@ When you want to host it on AWS with the Azure AD oauth2 server use:
     docker run \
         -e DATABASE_URL=postgresql://user:password@host/database
         -e SECRET_KEY=<secret-key-for-django>
-        -e LOCALSHOP_FILE_STORAGE=storages.backends.s3boto.S3BotoStorage
+        -e LOCALSHOP_FILE_STORAGE=storages.backends.s3.S3Storage
         -e LOCALSHOP_FILE_BUCKET_NAME=<your-aws-s3-bucket>
         -e OAUTH2_PROVIDER=azuread-oauth2 \
         -e OAUTH2_APPLICATION_ID=<your-oauth2-app-id>

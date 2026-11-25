@@ -29,7 +29,12 @@
                                 <li><a href="{% url 'admin:index' %}">{% trans "Django admin" %}</a></li>
                         {% endif %}
                         <li class="divider"></li>
-                        <li><a href="{% url 'logout' %}">{% trans "Logout" %}</a></li>
+                        <li>
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link navbar-btn" style="padding: 3px 20px;">{% trans "Logout" %}</button>
+                            </form>
+                        </li>
                     </ul>
                 </li>
             </ul>

@@ -34,7 +34,7 @@ setup(
         'django-model-utils',
         'django-storages',
         'django-widget-tweaks',
-        'Django',
+        'Django>=5.2,<6.0',
         'docutils',
         'netaddr',
         'Pillow',
@@ -67,5 +67,6 @@ setup(
         'Topic :: System :: Software Distribution',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.10',
+        'Framework :: Django :: 5.2',
     ],
 )
