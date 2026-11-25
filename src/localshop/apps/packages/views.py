@@ -10,6 +10,7 @@ from django.http import (
     Http404, HttpResponse, HttpResponseBadRequest, HttpResponseForbidden,
     HttpResponseNotFound)
 from django.shortcuts import redirect
+from django.urls import get_script_prefix
 from django.views import generic
 from versio.version import Version
 from versio.version_scheme import (
@@ -135,7 +136,9 @@ class DownloadReleaseFile(RepositoryMixin, RepositoryAccessMixin,
             else:
                 release_file = models.ReleaseFile.objects.get(pk=pk)
 
-        if settings.MEDIA_URL:
+        # Since Django 3.1 an unset (empty) MEDIA_URL reads as the script prefix ("/"),
+        # so compare with it: redirect only when MEDIA_URL was really configured.
+        if settings.MEDIA_URL and settings.MEDIA_URL != get_script_prefix():
             return redirect(release_file.distribution.url)
 
         # TODO: Use sendfile if enabled
